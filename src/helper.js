@@ -15,7 +15,7 @@ exports.getQueueStatus = function getQueueStatus() {
                     fillQueuesData(queues, el);
                 });
 
-                resolve(queues['300'].entries);
+                resolve(queues);
 
             } else {
                 resolve('Teste');
