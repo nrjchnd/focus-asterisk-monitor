@@ -1,0 +1,11 @@
+{
+  "name": "Asterisk",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "asterisk-manager": "^0.1.16",
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}
