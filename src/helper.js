@@ -1,10 +1,10 @@
 const AMI = require('./ami/ami');
 
-exports.getQueueStatus = function getQueueStatus() {
+exports.getQueueStatus = function getQueueStatus(ami) {
     return new Promise((resolve, reject) => {
-        AMI.action({ action: 'QueueStatus' }, async function (err, res) {
+        ami.action({ action: 'QueueStatus' }, async function (err, res) {
             if (!err) {
-                let response = await getListEvents(AMI, res.actionid, 'QueueStatusComplete');
+                let response = await getListEvents(ami, res.actionid, 'QueueStatusComplete');
                 let queues = {};
 
                 response.map(el => {

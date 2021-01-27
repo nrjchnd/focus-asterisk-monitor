@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const cors = require('cors');
-const AMI = require('./ami/ami');
+const { AMI300, AMI303 } = require('./ami/ami');
 
 const { getQueueStatus } = require('./helper');
 
@@ -20,26 +20,48 @@ const io = new socketio.Server(server, {
 });
 
 io.on('connection', socket => {
-    AMI.on('managerevent', event => {
+    AMI300.on('managerevent', event => {
         switch (event.event) {
             case 'QueueCallerJoin':
             case 'Join':
-                getQueueStatus().then(response => {
-                    socket.emit('queue-status', {
+                getQueueStatus(AMI300).then(response => {
+                    socket.emit('queue300-status', {
                         queue: response
                     })
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
-                getQueueStatus().then(response => {
-                    socket.emit('queue-status', {
+                getQueueStatus(AMI300).then(response => {
+                    socket.emit('queue300-status', {
                         queue: response
                     })
                 }).catch(err => console.log(err));
                 break;
         }
     })
+    //----------------------------------------------------------
+    AMI303.on('managerevent', event => {
+        switch (event.event) {
+            case 'QueueCallerJoin':
+            case 'Join':
+                getQueueStatus(AMI303).then(response => {
+                    socket.emit('queue303-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+            case 'Leave':
+            case 'QueueCallerLeave':
+                getQueueStatus(AMI303).then(response => {
+                    socket.emit('queue303-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+        }
+    })
+    //-----------------------------------------------------------
 });
 
-server.listen(3334, '192.168.7.127');
+server.listen(3334, '192.168.1.143');
