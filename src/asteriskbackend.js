@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const cors = require('cors');
-const { AMI300, AMI303 } = require('./ami/ami');
+const { AMI300, AMI303, AMI304, AMI305 } = require('./ami/ami');
 
 const { getQueueStatus } = require('./helper');
 
@@ -62,6 +62,48 @@ io.on('connection', socket => {
         }
     })
     //-----------------------------------------------------------
+    AMI304.on('managerevent', event => {
+        switch (event.event) {
+            case 'QueueCallerJoin':
+            case 'Join':
+                getQueueStatus(AMI304).then(response => {
+                    socket.emit('queue304-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+            case 'Leave':
+            case 'QueueCallerLeave':
+                getQueueStatus(AMI304).then(response => {
+                    socket.emit('queue304-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+        }
+    })
+    //-----------------------------------------------------------
+    AMI305.on('managerevent', event => {
+        switch (event.event) {
+            case 'QueueCallerJoin':
+            case 'Join':
+                getQueueStatus(AMI305).then(response => {
+                    socket.emit('queue305-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+            case 'Leave':
+            case 'QueueCallerLeave':
+                getQueueStatus(AMI305).then(response => {
+                    socket.emit('queue305-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+        }
+    })
+    //-----------------------------------------------------------
 });
 
-server.listen(3000, '192.168.1.143');
+server.listen(3334, 'localhost');
