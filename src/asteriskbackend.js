@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const cors = require('cors');
-const { AMI300, AMI303, AMI304, AMI305 } = require('./ami/ami');
+const { AMI300, AMI303, AMI304, AMI305, AMI301 } = require('./ami/ami');
 
 const { getQueueStatus } = require('./helper');
 
@@ -104,6 +104,26 @@ io.on('connection', socket => {
         }
     })
     //-----------------------------------------------------------
+    AMI301.on('managerevent', event => {
+        switch (event.event) {
+            case 'QueueCallerJoin':
+            case 'Join':
+                getQueueStatus(AMI301).then(response => {
+                    socket.emit('queue301-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+            case 'Leave':
+            case 'QueueCallerLeave':
+                getQueueStatus(AMI301).then(response => {
+                    socket.emit('queue301-status', {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+        }
+    })
 });
 
-server.listen(3000, '192.168.1.143');
+server.listen(3334, 'localhost');
