@@ -25,17 +25,13 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI300).then(response => {
-                    socket.emit('queue300-status', {
-                        queue: response
-                    })
+                    socket.emit('queue300-status', response)
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI300).then(response => {
-                    socket.emit('queue300-status', {
-                        queue: response
-                    })
+                    socket.emit('queue300-status', response)
                 }).catch(err => console.log(err));
                 break;
         }
@@ -46,17 +42,13 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI303).then(response => {
-                    socket.emit('queue303-status', {
-                        queue: response
-                    })
+                    socket.emit('queue303-status', response)
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI303).then(response => {
-                    socket.emit('queue303-status', {
-                        queue: response
-                    })
+                    socket.emit('queue303-status', response)
                 }).catch(err => console.log(err));
                 break;
         }
@@ -67,17 +59,13 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI304).then(response => {
-                    socket.emit('queue304-status', {
-                        queue: response
-                    })
+                    socket.emit('queue304-status', response)
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI304).then(response => {
-                    socket.emit('queue304-status', {
-                        queue: response
-                    })
+                    socket.emit('queue304-status', response)
                 }).catch(err => console.log(err));
                 break;
         }
@@ -88,17 +76,13 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI305).then(response => {
-                    socket.emit('queue305-status', {
-                        queue: response
-                    })
+                    socket.emit('queue305-status', response)
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI305).then(response => {
-                    socket.emit('queue305-status', {
-                        queue: response
-                    })
+                    socket.emit('queue305-status', response)
                 }).catch(err => console.log(err));
                 break;
         }
@@ -109,21 +93,17 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI301).then(response => {
-                    socket.emit('queue301-status', {
-                        queue: response
-                    })
+                    socket.emit('queue301-status', response)
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI301).then(response => {
-                    socket.emit('queue301-status', {
-                        queue: response
-                    })
+                    socket.emit('queue301-status', response)
                 }).catch(err => console.log(err));
                 break;
         }
     })
 });
 
-server.listen(3000, '192.168.1.143');
+server.listen(3334, 'localhost');
