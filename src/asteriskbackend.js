@@ -28,12 +28,33 @@ const hosts = [
     '192.168.1.38',
 ]
 
+const amiList = [
+    AMI300,
+    AMI303,
+    AMI304,
+    AMI305,
+    AMI301
+]
+
 function pingServers(socket) {
     setInterval(() => {
-        hosts.forEach(host => {
+        hosts.forEach((host, index) => {
             ping.sys.probe(host, (alive, err) => {
                 if (err) console.log(err);
-                socket.emit(`${host}-connection-status`, alive);
+                if (alive) {
+                    amiList[index].action({
+                        'action': 'ping'
+                    }, function (err, res) {
+                        if (err) socket.emit(`${host}-connection-status`, false);
+                        if (res.ping === 'Pong') {
+                            socket.emit(`${host}-connection-status`, true)
+                        } else {
+                            socket.emit(`${host}-connection-status`, false)
+                        }
+                    })
+                } else {
+                    socket.emit(`${host}-connection-status`, alive);
+                }
             })
         })
     }, 5000);
@@ -148,4 +169,4 @@ io.on('connection', socket => {
     })
 });
 
-server.listen(3000, '192.168.1.143');
+server.listen(3334, 'localhost');
