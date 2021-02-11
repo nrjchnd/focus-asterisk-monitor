@@ -3,6 +3,7 @@ const http = require('http');
 const socketio = require('socket.io');
 const cors = require('cors');
 const { AMI300, AMI303, AMI304, AMI305, AMI301 } = require('./ami/ami');
+const ping = require('ping');
 
 const { getQueueStatus } = require('./helper');
 
@@ -19,19 +20,44 @@ const io = new socketio.Server(server, {
     }
 });
 
+const hosts = [
+    '192.168.1.31',
+    '192.168.1.35',
+    '192.168.1.36',
+    '192.168.1.37',
+    '192.168.1.38',
+]
+
+function pingServers(socket) {
+    setInterval(() => {
+        hosts.forEach(host => {
+            ping.sys.probe(host, (alive, err) => {
+                if (err) console.log(err);
+                socket.emit(`${host}-connection-status`, alive);
+            })
+        })
+    }, 5000)
+}
+
+
 io.on('connection', socket => {
+    pingServers(socket);
     AMI300.on('managerevent', event => {
         switch (event.event) {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI300).then(response => {
-                    socket.emit('queue300-status', response)
+                    socket.emit('queue300-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI300).then(response => {
-                    socket.emit('queue300-status', response)
+                    socket.emit('queue300-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
         }
@@ -42,13 +68,17 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI303).then(response => {
-                    socket.emit('queue303-status', response)
+                    socket.emit('queue303-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI303).then(response => {
-                    socket.emit('queue303-status', response)
+                    socket.emit('queue303-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
         }
@@ -59,13 +89,17 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI304).then(response => {
-                    socket.emit('queue304-status', response)
+                    socket.emit('queue304-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI304).then(response => {
-                    socket.emit('queue304-status', response)
+                    socket.emit('queue304-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
         }
@@ -76,13 +110,17 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI305).then(response => {
-                    socket.emit('queue305-status', response)
+                    socket.emit('queue305-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI305).then(response => {
-                    socket.emit('queue305-status', response)
+                    socket.emit('queue305-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
         }
@@ -93,17 +131,21 @@ io.on('connection', socket => {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(AMI301).then(response => {
-                    socket.emit('queue301-status', response)
+                    socket.emit('queue301-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(AMI301).then(response => {
-                    socket.emit('queue301-status', response)
+                    socket.emit('queue301-status', {
+                        queue: response
+                    })
                 }).catch(err => console.log(err));
                 break;
         }
     })
 });
 
-server.listen(3334, 'localhost');
+server.listen(3000, '192.168.1.143');
