@@ -36,7 +36,7 @@ function pingServers(socket) {
                 socket.emit(`${host}-connection-status`, alive);
             })
         })
-    }, 5000)
+    }, 5000);
 }
 
 
