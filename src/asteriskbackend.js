@@ -45,11 +45,13 @@ function pingServers(socket) {
                     amiList[index].action({
                         'action': 'ping'
                     }, function (err, res) {
-                        if (err) socket.emit(`${host}-connection-status`, false);
+                        if (err) {
+                            socket.emit(`${host}-connection-status`, false);
+                        };
                         if (res.ping === 'Pong') {
-                            socket.emit(`${host}-connection-status`, true)
+                            socket.emit(`${host}-connection-status`, true);
                         } else {
-                            socket.emit(`${host}-connection-status`, false)
+                            socket.emit(`${host}-connection-status`, false);
                         }
                     })
                 } else {
