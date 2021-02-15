@@ -171,4 +171,4 @@ io.on('connection', socket => {
     })
 });
 
-server.listen(3334, 'localhost');
+server.listen(3000, '192.168.1.143');
