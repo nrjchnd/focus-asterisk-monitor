@@ -2,10 +2,12 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const cors = require('cors');
-const { AMI300, AMI303, AMI304, AMI305, AMI301 } = require('./ami/ami');
 const ping = require('ping');
+const { AMI300, AMI303, AMI304, AMI305, AMI301 } = require('./ami/ami');
+const { sipmonitor303 } = require('./sipmonitorinstances');
 
 const { getQueueStatus } = require('./helper');
+const { amiList, hosts } = require('./pinginfos');
 
 const app = express();
 
@@ -20,21 +22,15 @@ const io = new socketio.Server(server, {
     }
 });
 
-const hosts = [
-    '192.168.1.31',
-    '192.168.1.35',
-    '192.168.1.36',
-    '192.168.1.37',
-    '192.168.1.38',
-]
 
-const amiList = [
-    AMI300,
-    AMI303,
-    AMI304,
-    AMI305,
-    AMI301
-]
+function startSipMonitor(ami, sipmonitor) {
+    setInterval(async () => {
+        ami.action({
+            'action': 'SIPpeers'
+        });
+        sipmonitor.insertDNDStatus(ami);
+    }, 5000);
+}
 
 function pingServers(socket) {
     setInterval(() => {
@@ -62,9 +58,33 @@ function pingServers(socket) {
     }, 5000);
 }
 
+function AmiManagerEvent(ami, socketAmiQueueName, socket, sipmonitor) {
+    ami.on('managerevent', event => {
+        sipmonitor.filterExtensions(event);
+        switch (event.event) {
+            case 'QueueCallerJoin':
+            case 'Join':
+                getQueueStatus(ami).then(response => {
+                    socket.emit(`${socketAmiQueueName}-status`, {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+            case 'Leave':
+            case 'QueueCallerLeave':
+                getQueueStatus(AMI303).then(response => {
+                    socket.emit(`${socketAmiQueueName}-status`, {
+                        queue: response
+                    })
+                }).catch(err => console.log(err));
+                break;
+        }
+    })
+}
 
 io.on('connection', socket => {
     pingServers(socket);
+    startSipMonitor(AMI303, sipmonitor303);
     AMI300.on('managerevent', event => {
         switch (event.event) {
             case 'QueueCallerJoin':
@@ -86,26 +106,7 @@ io.on('connection', socket => {
         }
     })
     //----------------------------------------------------------
-    AMI303.on('managerevent', event => {
-        switch (event.event) {
-            case 'QueueCallerJoin':
-            case 'Join':
-                getQueueStatus(AMI303).then(response => {
-                    socket.emit('queue303-status', {
-                        queue: response
-                    })
-                }).catch(err => console.log(err));
-                break;
-            case 'Leave':
-            case 'QueueCallerLeave':
-                getQueueStatus(AMI303).then(response => {
-                    socket.emit('queue303-status', {
-                        queue: response
-                    })
-                }).catch(err => console.log(err));
-                break;
-        }
-    })
+    AmiManagerEvent(AMI303, 'queue303', socket, sipmonitor303); // New use of Manager Event
     //-----------------------------------------------------------
     AMI304.on('managerevent', event => {
         switch (event.event) {
@@ -171,4 +172,4 @@ io.on('connection', socket => {
     })
 });
 
-server.listen(3000, '192.168.1.143');
+server.listen(3334, '192.168.7.127');
