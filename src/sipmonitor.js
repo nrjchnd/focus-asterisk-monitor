@@ -7,6 +7,21 @@ class SipMonitor {
         this.ami = ami;
     }
 
+    getDndEntries(ami) {
+        return new Promise(async (resolve, reject) => {
+            await ami.action({
+                'action': 'Command',
+                'command': 'database show'
+            }, function (err, evt) {
+                try {
+                    resolve(evt.content.match(/\/DND\/\d+/g));
+                } catch (err) {
+                    resolve(['Permission Denied']);
+                }
+            })
+        })
+    }
+
     async insertDNDStatus(ami) {
         let DNDArr = await this.getDndEntries(ami);
         if (DNDArr) {
@@ -28,29 +43,6 @@ class SipMonitor {
                 peer.dnd = false;
             })
         }
-    }
-
-    deleteDND(ami, extension) {
-        ami.action({
-            'action': 'DBdeltree',
-            'family': 'DND',
-            'key': extension.toString()
-        })
-    }
-
-    getDndEntries(ami) {
-        return new Promise(async (resolve, reject) => {
-            await ami.action({
-                'action': 'Command',
-                'command': 'database show'
-            }, function (err, evt) {
-                try {
-                    resolve(evt.content.match(/\/DND\/\d+/g));
-                } catch (err) {
-                    resolve(['Permission Denied']);
-                }
-            })
-        })
     }
 
     getExtensionName(extension, ami) {
@@ -80,6 +72,14 @@ class SipMonitor {
                 peer.name = await this.getExtensionName(peer.objectname, this.ami);
             })
         }
+    }
+
+    deleteDND(ami, extension) {
+        ami.action({
+            'action': 'DBdeltree',
+            'family': 'DND',
+            'key': extension.toString()
+        })
     }
 
 }
