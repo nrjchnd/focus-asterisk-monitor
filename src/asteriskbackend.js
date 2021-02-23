@@ -20,18 +20,19 @@ const io = new socketio.Server(server, {
     }
 });
 
-function beginSipMonitor(ami, sipmonitor, socket = null, socketAmiQueueName = null) {
+function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
     setInterval(async () => {
         ami.action({
             'action': 'SIPpeers'
         });
         sipmonitor.insertDNDStatus(ami);
-        if (socket && socketAmiQueueName) {
-            socket.emit(`${socketAmiQueueName}-sip-status`, {
+        if (socketAmiQueueName) {
+            io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
                 all: sipmonitor.finalSipAllArr,
                 unregistered: sipmonitor.finalSipNotOkArr
             });
         }
+        console.log(sipmonitor.finalSipAllArr.length);
     }, 15000);
 }
 
@@ -62,10 +63,12 @@ function AmiManagerEvent(ami, socketAmiQueueName, socket, sipmonitor = null) {
     })
 }
 
+//VER O PQ N ESTÁ INDO COM 2 CLIENTES CONECTADOS
+beginSipMonitor(AMI303, sipmonitor303, 'queue303');
+
 io.on('connection', socket => {
     pingServers(socket);
     // beginSipMonitor(AMI300, sipmonitor300);
-    beginSipMonitor(AMI303, sipmonitor303, socket, 'queue303');
     // beginSipMonitor(AMI304, sipmonitor304);
     // beginSipMonitor(AMI305, sipmonitor305);
     // beginSipMonitor(AMI301, sipmonitor301);
