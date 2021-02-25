@@ -29,15 +29,14 @@ function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
         if (socketAmiQueueName) {
             io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
                 all: sipmonitor.finalSipAllArr,
-                unregistered: sipmonitor.finalSipNotOkArr
+                unregistered: sipmonitor.finalSipNotOkArr,
+                dnd: sipmonitor.finalSipDndArr
             });
         }
-        console.log(sipmonitor.finalSipAllArr.length);
     }, 15000);
 }
 
-
-function AmiManagerEvent(ami, socketAmiQueueName, socket, sipmonitor = null) {
+function AmiManagerEvent(ami, socketAmiQueueName, sipmonitor = null) {
     ami.on('managerevent', event => {
         if (sipmonitor) {
             sipmonitor.filterExtensions(event);
@@ -46,7 +45,7 @@ function AmiManagerEvent(ami, socketAmiQueueName, socket, sipmonitor = null) {
             case 'QueueCallerJoin':
             case 'Join':
                 getQueueStatus(ami).then(response => {
-                    socket.emit(`${socketAmiQueueName}-status`, {
+                    io.sockets.emit(`${socketAmiQueueName}-status`, {
                         queue: response
                     })
                 }).catch(err => console.log(err));
@@ -54,7 +53,7 @@ function AmiManagerEvent(ami, socketAmiQueueName, socket, sipmonitor = null) {
             case 'Leave':
             case 'QueueCallerLeave':
                 getQueueStatus(ami).then(response => {
-                    socket.emit(`${socketAmiQueueName}-status`, {
+                    io.sockets.emit(`${socketAmiQueueName}-status`, {
                         queue: response
                     })
                 }).catch(err => console.log(err));
@@ -63,21 +62,18 @@ function AmiManagerEvent(ami, socketAmiQueueName, socket, sipmonitor = null) {
     })
 }
 
-//VER O PQ N ESTÁ INDO COM 2 CLIENTES CONECTADOS
-beginSipMonitor(AMI303, sipmonitor303, 'queue303');
+pingServers(io);
 
-io.on('connection', socket => {
-    pingServers(socket);
-    // beginSipMonitor(AMI300, sipmonitor300);
-    // beginSipMonitor(AMI304, sipmonitor304);
-    // beginSipMonitor(AMI305, sipmonitor305);
-    // beginSipMonitor(AMI301, sipmonitor301);
-    //-----------------------------------------------------------
-    AmiManagerEvent(AMI300, 'queue300', socket);
-    AmiManagerEvent(AMI303, 'queue303', socket, sipmonitor303);
-    AmiManagerEvent(AMI304, 'queue304', socket);
-    AmiManagerEvent(AMI305, 'queue305', socket);
-    AmiManagerEvent(AMI301, 'queue301', socket);
-});
+beginSipMonitor(AMI303, sipmonitor303, 'server35');
+// beginSipMonitor(AMI300, sipmonitor300);
+// beginSipMonitor(AMI304, sipmonitor304);
+// beginSipMonitor(AMI305, sipmonitor305);
+// beginSipMonitor(AMI301, sipmonitor301);
+//-----------------------------------------------------------
+AmiManagerEvent(AMI303, 'queue303', sipmonitor303);
+AmiManagerEvent(AMI300, 'queue300');
+AmiManagerEvent(AMI304, 'queue304');
+AmiManagerEvent(AMI305, 'queue305');
+AmiManagerEvent(AMI301, 'queue301');
 
 server.listen(3334, '192.168.7.127');

@@ -19,7 +19,7 @@ const amiList = [
 
 
 module.exports = {
-    pingServers(socket) {
+    pingServers(io) {
         setInterval(() => {
             hosts.forEach((host, index) => {
                 ping.sys.probe(host, (alive, err) => {
@@ -29,16 +29,16 @@ module.exports = {
                             'action': 'ping'
                         }, function (err, res) {
                             if (err) {
-                                socket.emit(`${host}-connection-status`, false);
+                                io.sockets.emit(`${host}-connection-status`, false);
                             };
                             if (res.ping === 'Pong') {
-                                socket.emit(`${host}-connection-status`, true);
+                                io.sockets.emit(`${host}-connection-status`, true);
                             } else {
-                                socket.emit(`${host}-connection-status`, false);
+                                io.sockets.emit(`${host}-connection-status`, false);
                             }
                         })
                     } else {
-                        socket.emit(`${host}-connection-status`, alive);
+                        io.sockets.emit(`${host}-connection-status`, alive);
                     }
                 })
             })

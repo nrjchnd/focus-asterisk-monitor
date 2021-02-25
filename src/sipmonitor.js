@@ -4,6 +4,7 @@ class SipMonitor {
         this.tempSipAllArr = [];
         this.finalSipNotOkArr = [];
         this.finalSipAllArr = [];
+        this.finalSipDndArr = [];
         this.ami = ami;
     }
 
@@ -32,6 +33,7 @@ class SipMonitor {
                         if (peer.objectname === extension[0]) {
                             peer.dnd = true;
                             peer.name = await this.getExtensionName(peer.objectname, ami);
+                            this.finalSipDndArr.push(peer);
                         } else if (peer.objectname !== extension[0] && peer.dnd === undefined) {
                             peer.dnd = false;
                         }
@@ -68,6 +70,7 @@ class SipMonitor {
             this.finalSipAllArr = this.tempSipAllArr;
             this.tempSipArr = [];
             this.tempSipAllArr = [];
+            this.finalSipDndArr = [];
             this.finalSipNotOkArr.map(async peer => {
                 peer.name = await this.getExtensionName(peer.objectname, this.ami);
             })
