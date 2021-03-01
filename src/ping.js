@@ -25,18 +25,7 @@ module.exports = {
                 ping.sys.probe(host, (alive, err) => {
                     if (err) console.log(err);
                     if (alive) {
-                        amiList[index].action({
-                            'action': 'ping'
-                        }, function (err, res) {
-                            if (err) {
-                                io.sockets.emit(`${host}-connection-status`, false);
-                            };
-                            if (res.ping === 'Pong') {
-                                io.sockets.emit(`${host}-connection-status`, true);
-                            } else {
-                                io.sockets.emit(`${host}-connection-status`, false);
-                            }
-                        })
+                        io.sockets.emit(`${host}-connection-status`, true);
                     } else {
                         io.sockets.emit(`${host}-connection-status`, alive);
                     }

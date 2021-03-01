@@ -25,15 +25,19 @@ function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
         ami.action({
             'action': 'SIPpeers'
         });
-        sipmonitor.insertDNDStatus(ami);
-        if (socketAmiQueueName) {
-            io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
-                all: sipmonitor.finalSipAllArr,
-                unregistered: sipmonitor.finalSipNotOkArr,
-                dnd: sipmonitor.finalSipDndArr
-            });
-        }
-    }, 15000);
+        setTimeout(() => {
+            sipmonitor.insertDNDStatus(ami)
+        }, 1000);
+        setTimeout(() => {
+            if (socketAmiQueueName) {
+                io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
+                    all: sipmonitor.finalSipAllArr,
+                    unregistered: sipmonitor.finalSipNotOkArr,
+                    dnd: sipmonitor.finalSipDndArr
+                });
+            }
+        }, 2000);
+    }, 13000);
 }
 
 function AmiManagerEvent(ami, socketAmiQueueName, sipmonitor = null) {
@@ -65,15 +69,15 @@ function AmiManagerEvent(ami, socketAmiQueueName, sipmonitor = null) {
 pingServers(io);
 
 beginSipMonitor(AMI303, sipmonitor303, 'server35');
-// beginSipMonitor(AMI300, sipmonitor300);
-// beginSipMonitor(AMI304, sipmonitor304);
-// beginSipMonitor(AMI305, sipmonitor305);
-// beginSipMonitor(AMI301, sipmonitor301);
+beginSipMonitor(AMI300, sipmonitor300, 'server31');
+beginSipMonitor(AMI304, sipmonitor304, 'server36');
+beginSipMonitor(AMI305, sipmonitor305, 'server37');
+beginSipMonitor(AMI301, sipmonitor301, 'server38');
 //-----------------------------------------------------------
 AmiManagerEvent(AMI303, 'queue303', sipmonitor303);
-AmiManagerEvent(AMI300, 'queue300');
-AmiManagerEvent(AMI304, 'queue304');
-AmiManagerEvent(AMI305, 'queue305');
-AmiManagerEvent(AMI301, 'queue301');
+AmiManagerEvent(AMI300, 'queue300', sipmonitor300);
+AmiManagerEvent(AMI304, 'queue304', sipmonitor304);
+AmiManagerEvent(AMI305, 'queue305', sipmonitor305);
+AmiManagerEvent(AMI301, 'queue301', sipmonitor301);
 
 server.listen(3334, '192.168.7.127');
