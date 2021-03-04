@@ -55,6 +55,7 @@ class SipMonitor {
                 'action': 'SIPshowpeer',
                 'peer': extension
             }, function (err, evt) {
+                if (err) console.log(err);
                 if (!err) resolve(evt.callerid);
             });
         })

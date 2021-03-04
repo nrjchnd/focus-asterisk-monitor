@@ -1,5 +1,4 @@
 const ping = require('ping');
-const { AMI300, AMI303, AMI304, AMI305, AMI301 } = require('./ami/ami');
 
 const hosts = [
     '192.168.1.31',
@@ -7,14 +6,7 @@ const hosts = [
     '192.168.1.36',
     '192.168.1.37',
     '192.168.1.38',
-]
-
-const amiList = [
-    AMI300,
-    AMI303,
-    AMI304,
-    AMI305,
-    AMI301
+    '192.168.1.32'
 ]
 
 
