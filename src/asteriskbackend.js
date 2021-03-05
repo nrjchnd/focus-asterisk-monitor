@@ -27,7 +27,7 @@ function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
         });
         setTimeout(() => {
             sipmonitor.insertDNDStatus(ami)
-        }, 2000);
+        }, 3000);
         setTimeout(() => {
             if (socketAmiQueueName) {
                 io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
@@ -36,7 +36,7 @@ function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
                     dnd: sipmonitor.finalSipDndArr
                 });
             }
-        }, 4000);
+        }, 5000);
     }, 13000);
 }
 

@@ -33,9 +33,7 @@ class SipMonitor {
                         if (peer.objectname === extension[0]) {
                             peer.dnd = true;
                             peer.name = await this.getExtensionName(peer.objectname, ami);
-                            if (Number(peer.objectname) >= 2000) {
-                                this.finalSipDndArr.push(peer);
-                            }
+                            this.finalSipDndArr.push(peer);
                         } else if (peer.objectname !== extension[0] && peer.dnd === undefined) {
                             peer.dnd = false;
                         }
@@ -64,7 +62,7 @@ class SipMonitor {
     filterExtensions(evt) {
         if (evt.event === 'PeerEntry') {
             this.tempSipAllArr.push(evt);
-            if (!evt.status.includes('OK')) {
+            if (!evt.status.includes('OK') && Number(evt.objectname) <= 15000) {
                 this.tempSipArr.push(evt);
             }
         }
