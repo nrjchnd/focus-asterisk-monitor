@@ -70,18 +70,18 @@ function AmiManagerEvent(ami, socketAmiQueueName, sipmonitor = null, isMonit) {
 
 pingServers(io);
 
-beginSipMonitor(AMI303, sipmonitor303, 'server35', false);
-beginSipMonitor(AMI300, sipmonitor300, 'server31', false);
-beginSipMonitor(AMI304, sipmonitor304, 'server36', false);
-beginSipMonitor(AMI305, sipmonitor305, 'server37', false);
-beginSipMonitor(AMI301, sipmonitor301, 'server38', false);
-beginSipMonitor(MONITORAMENTO, sipmonitorMonit, 'server32', true);
+beginSipMonitor(AMI303, sipmonitor303, 'server35');
+beginSipMonitor(AMI300, sipmonitor300, 'server31');
+beginSipMonitor(AMI304, sipmonitor304, 'server36');
+beginSipMonitor(AMI305, sipmonitor305, 'server37');
+beginSipMonitor(AMI301, sipmonitor301, 'server38');
+beginSipMonitor(MONITORAMENTO, sipmonitorMonit, 'server32');
 //-----------------------------------------------------------
-AmiManagerEvent(AMI303, 'queue303', sipmonitor303);
-AmiManagerEvent(AMI300, 'queue300', sipmonitor300);
-AmiManagerEvent(AMI304, 'queue304', sipmonitor304);
-AmiManagerEvent(AMI305, 'queue305', sipmonitor305);
-AmiManagerEvent(AMI301, 'queue301', sipmonitor301);
-AmiManagerEvent(MONITORAMENTO, 'monit', sipmonitorMonit)
+AmiManagerEvent(AMI303, 'queue303', sipmonitor303, false);
+AmiManagerEvent(AMI300, 'queue300', sipmonitor300, false);
+AmiManagerEvent(AMI304, 'queue304', sipmonitor304, false);
+AmiManagerEvent(AMI305, 'queue305', sipmonitor305, false);
+AmiManagerEvent(AMI301, 'queue301', sipmonitor301, false);
+AmiManagerEvent(MONITORAMENTO, 'monit', sipmonitorMonit, true);
 
-server.listen(3000, '192.168.1.143');
+server.listen(3000, '192.168.7.127');
