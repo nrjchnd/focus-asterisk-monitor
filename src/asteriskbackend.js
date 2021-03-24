@@ -6,6 +6,7 @@ const { AMI300, AMI303, AMI304, AMI305, AMI301, MONITORAMENTO } = require('./ami
 const { sipmonitor303, sipmonitor300, sipmonitor301, sipmonitor304, sipmonitor305, sipmonitorMonit } = require('./sipmonitorinstances');
 const { getQueueStatus } = require('./helper');
 const { pingServers } = require('./ping');
+const axios = require('axios');
 
 const app = express();
 
@@ -28,13 +29,18 @@ function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
         setTimeout(() => {
             sipmonitor.insertDNDStatus(ami)
         }, 3000);
-        setTimeout(() => {
+        setTimeout(async () => {
             if (socketAmiQueueName) {
-                io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
-                    all: sipmonitor.finalSipAllArr,
+                await axios.post('http://localhost:3333/insertincidents', {
                     unregistered: sipmonitor.finalSipNotOkArr,
-                    dnd: sipmonitor.finalSipDndArr
+                    dnd: sipmonitor.finalSipDndArr,
+                    name: socketAmiQueueName
                 });
+                // io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
+                //     all: sipmonitor.finalSipAllArr,
+                //     unregistered: sipmonitor.finalSipNotOkArr,
+                //     dnd: sipmonitor.finalSipDndArr
+                // });
             }
         }, 5000);
     }, 13000);
