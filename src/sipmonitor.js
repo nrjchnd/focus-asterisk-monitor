@@ -63,7 +63,10 @@ class SipMonitor {
         if (evt.event === 'PeerEntry') {
             this.tempSipAllArr.push(evt);
             if (!evt.status.includes('OK') && Number(evt.objectname) <= 15000) {
-                this.tempSipArr.push(evt);
+                this.tempSipArr.push({
+                    ...evt,
+                    timestamp: Date.now()
+                });
             }
         }
         if (evt.event === 'PeerlistComplete') {
