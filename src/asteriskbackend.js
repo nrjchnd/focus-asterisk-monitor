@@ -26,21 +26,16 @@ function beginSipMonitor(ami, sipmonitor, socketAmiQueueName = null) {
         ami.action({
             'action': 'SIPpeers'
         });
-        setTimeout(() => {
-            sipmonitor.insertDNDStatus(ami)
-        }, 3000);
+        // setTimeout(() => {
+        //     sipmonitor.insertDNDStatus(ami) DND retirado
+        // }, 3000);
         setTimeout(async () => {
             if (socketAmiQueueName) {
                 await axios.post('http://localhost:3333/insertincidents', {
                     unregistered: sipmonitor.finalSipNotOkArr,
-                    dnd: sipmonitor.finalSipDndArr,
+                    // dnd: sipmonitor.finalSipDndArr, DND retirado
                     name: socketAmiQueueName
                 });
-                // io.sockets.emit(`${socketAmiQueueName}-sip-status`, {
-                //     all: sipmonitor.finalSipAllArr,
-                //     unregistered: sipmonitor.finalSipNotOkArr,
-                //     dnd: sipmonitor.finalSipDndArr
-                // });
             }
         }, 5000);
     }, 13000);

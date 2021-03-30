@@ -32,6 +32,7 @@ class SipMonitor {
                     this.finalSipAllArr.map(async peer => {
                         if (peer.objectname === extension[0]) {
                             peer.dnd = true;
+                            peer.timestamp = Date.now();
                             peer.name = await this.getExtensionName(peer.objectname, ami);
                             this.finalSipDndArr.push(peer);
                         } else if (peer.objectname !== extension[0] && peer.dnd === undefined) {
@@ -65,7 +66,8 @@ class SipMonitor {
             if (!evt.status.includes('OK') && Number(evt.objectname) <= 15000) {
                 this.tempSipArr.push({
                     ...evt,
-                    timestamp: Date.now()
+                    timestamp: Date.now(),
+                    recognized: false
                 });
             }
         }
