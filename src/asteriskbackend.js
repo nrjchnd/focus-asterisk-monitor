@@ -85,4 +85,4 @@ AmiManagerEvent(AMI305, 'queue305', sipmonitor305, false);
 AmiManagerEvent(AMI301, 'queue301', sipmonitor301, false);
 AmiManagerEvent(MONITORAMENTO, 'monit', sipmonitorMonit, true);
 
-server.listen(3000, '192.168.7.127');
+server.listen(3000, '192.168.1.143');
