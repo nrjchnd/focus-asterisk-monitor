@@ -13,6 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(require('./routes'));
 
 const server = http.createServer(app);
 const io = new socketio.Server(server, {
